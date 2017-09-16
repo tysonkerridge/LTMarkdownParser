@@ -46,21 +46,21 @@ open class LTMarkdownParser: TSBaseParser {
     public typealias LTMarkdownParserFormattingBlock = ((NSMutableAttributedString, NSRange) -> Void)
     public typealias LTMarkdownParserLevelFormattingBlock = ((NSMutableAttributedString, NSRange, Int) -> Void)
     
-    open var headerAttributes = [[String: Any]]()
-    open var listAttributes = [[String: Any]]()
-    open var numberedListAttributes = [[String: Any]]()
-    open var quoteAttributes = [[String: Any]]()
+    open var headerAttributes = [[NSAttributedStringKey: Any]]()
+    open var listAttributes = [[NSAttributedStringKey: Any]]()
+    open var numberedListAttributes = [[NSAttributedStringKey: Any]]()
+    open var quoteAttributes = [[NSAttributedStringKey: Any]]()
     
-    open var imageAttributes = [String: Any]()
-    open var linkAttributes = [String: Any]()
-    open var monospaceAttributes = [String: Any]()
-    open var strongAttributes = [String: Any]()
-    open var emphasisAttributes = [String: Any]()
-    open var strongAndEmphasisAttributes = [String: Any]()
+    open var imageAttributes = [NSAttributedStringKey: Any]()
+    open var linkAttributes = [NSAttributedStringKey: Any]()
+    open var monospaceAttributes = [NSAttributedStringKey: Any]()
+    open var strongAttributes = [NSAttributedStringKey: Any]()
+    open var emphasisAttributes = [NSAttributedStringKey: Any]()
+    open var strongAndEmphasisAttributes = [NSAttributedStringKey: Any]()
     
     open static var standardParser = LTMarkdownParser()
     
-    class func addAttributes(_ attributesArray: [[String: Any]], atIndex level: Int, toString attributedString: NSMutableAttributedString, range: NSRange) {
+    class func addAttributes(_ attributesArray: [[NSAttributedStringKey: Any]], atIndex level: Int, toString attributedString: NSMutableAttributedString, range: NSRange) {
         guard !attributesArray.isEmpty else { return }
         
         guard let newAttributes = level < attributesArray.count && level >= 0 ? attributesArray[level] : attributesArray.last else { return }
@@ -71,32 +71,32 @@ open class LTMarkdownParser: TSBaseParser {
     public init(withDefaultParsing: Bool = true) {
         super.init()
         
-        defaultAttributes = [NSFontAttributeName: UIFont.systemFont(ofSize: 12), NSParagraphStyleAttributeName: NSParagraphStyle()]
+        defaultAttributes = [.font: UIFont.systemFont(ofSize: 12), .paragraphStyle: NSParagraphStyle()]
         headerAttributes = [
-            [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 23)],
-            [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 21)],
-            [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 19)],
-            [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 17)],
-            [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)],
-            [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 13)]
+            [.font: UIFont.boldSystemFont(ofSize: 23)],
+            [.font: UIFont.boldSystemFont(ofSize: 21)],
+            [.font: UIFont.boldSystemFont(ofSize: 19)],
+            [.font: UIFont.boldSystemFont(ofSize: 17)],
+            [.font: UIFont.boldSystemFont(ofSize: 15)],
+            [.font: UIFont.boldSystemFont(ofSize: 13)]
         ]
         
         linkAttributes = [
-            NSForegroundColorAttributeName: UIColor.blue,
-            NSUnderlineStyleAttributeName: NSUnderlineStyle.styleSingle.rawValue as AnyObject
+            .foregroundColor: UIColor.blue,
+            .underlineStyle: NSUnderlineStyle.styleSingle.rawValue as AnyObject
         ]
         
         monospaceAttributes = [
-            NSFontAttributeName: UIFont(name: "Menlo", size: 12) ?? UIFont.systemFont(ofSize: 12),
-            NSForegroundColorAttributeName: UIColor(red: 0.95, green: 0.54, blue: 0.55, alpha: 1)
+            .font: UIFont(name: "Menlo", size: 12) ?? UIFont.systemFont(ofSize: 12),
+            .foregroundColor: UIColor(red: 0.95, green: 0.54, blue: 0.55, alpha: 1)
         ]
         
-        strongAttributes = [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)]
-        emphasisAttributes = [NSFontAttributeName: UIFont.italicSystemFont(ofSize: 12)]
+        strongAttributes = [.font: UIFont.boldSystemFont(ofSize: 12)]
+        emphasisAttributes = [.font: UIFont.italicSystemFont(ofSize: 12)]
         
         var strongAndEmphasisFont = UIFont.systemFont(ofSize: 12)
         strongAndEmphasisFont = UIFont(descriptor: strongAndEmphasisFont.fontDescriptor.withSymbolicTraits([.traitItalic, .traitBold])!, size: strongAndEmphasisFont.pointSize)
-        strongAndEmphasisAttributes = [NSFontAttributeName: strongAndEmphasisFont]
+        strongAndEmphasisAttributes = [.font: strongAndEmphasisFont]
         
         if withDefaultParsing {
             addCodeEscapingParsing()
@@ -145,7 +145,7 @@ open class LTMarkdownParser: TSBaseParser {
             
             addStrongParsingWithFormattingBlock { attributedString, range in
                 attributedString.enumerateAttributes(in: range, options: []) { attributes, range, _ in
-                    if let font = attributes[NSFontAttributeName] as? UIFont, let italicFont = self.emphasisAttributes[NSFontAttributeName] as? UIFont, font == italicFont {
+                    if let font = attributes[.font] as? UIFont, let italicFont = self.emphasisAttributes[.font] as? UIFont, font == italicFont {
                         attributedString.addAttributes(self.strongAndEmphasisAttributes, range: range)
                     } else {
                         attributedString.addAttributes(self.strongAttributes, range: range)
@@ -155,7 +155,7 @@ open class LTMarkdownParser: TSBaseParser {
             
             addEmphasisParsingWithFormattingBlock { attributedString, range in
                 attributedString.enumerateAttributes(in: range, options: []) { attributes, range, _ in
-                    if let font = attributes[NSFontAttributeName] as? UIFont, let boldFont = self.strongAttributes[NSFontAttributeName] as? UIFont, font == boldFont {
+                    if let font = attributes[.font] as? UIFont, let boldFont = self.strongAttributes[.font] as? UIFont, font == boldFont {
                         attributedString.addAttributes(self.strongAndEmphasisAttributes, range: range)
                     } else {
                         attributedString.addAttributes(self.emphasisAttributes, range: range)
@@ -190,7 +190,7 @@ open class LTMarkdownParser: TSBaseParser {
         guard let codingParsingRegex = TSSwiftMarkdownRegex.regexForString(TSSwiftMarkdownRegex.CodeEscaping) else { return }
         
         addParsingRuleWithRegularExpression(codingParsingRegex) { match, attributedString in
-            let range = match.rangeAt(2)
+            let range = match.range(at: 2)
             let matchString = attributedString.attributedSubstring(from: range).string as NSString
             
             var escapedString = ""
@@ -211,9 +211,9 @@ open class LTMarkdownParser: TSBaseParser {
         guard let regex = TSSwiftMarkdownRegex.regexForString(regexString, options: .anchorsMatchLines) else { return }
         
         addParsingRuleWithRegularExpression(regex) { match, attributedString in
-            let level = match.rangeAt(1).length
-            formattingBlock?(attributedString, match.rangeAt(2), level)
-            leadFormattingBlock(attributedString, NSRange(location: match.rangeAt(1).location, length: match.rangeAt(2).location - match.rangeAt(1).location), level)
+            let level = match.range(at: 1).length
+            formattingBlock?(attributedString, match.range(at: 2), level)
+            leadFormattingBlock(attributedString, NSRange(location: match.range(at: 1).location, length: match.range(at: 2).location - match.range(at: 1).location), level)
         }
     }
     
@@ -282,7 +282,7 @@ open class LTMarkdownParser: TSBaseParser {
             attributedString.deleteCharacters(in: NSRange(location: linkRange.location - 1, length: linkRange.length + 2))
             
             if let linkUrlString = self?.unescaped(string: linkUrlString), let url = URL(string: linkUrlString) ?? URL(string: linkUrlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? linkUrlString) {
-                attributedString.addAttribute(NSLinkAttributeName, value: url, range: linkTextRange)
+                attributedString.addAttribute(.link, value: url, range: linkTextRange)
             }
             formattingBlock(attributedString, linkTextRange)
             
@@ -294,9 +294,9 @@ open class LTMarkdownParser: TSBaseParser {
         guard let regex = TSSwiftMarkdownRegex.regexForString(pattern) else { return }
         
         addParsingRuleWithRegularExpression(regex) { match, attributedString in
-            attributedString.deleteCharacters(in: match.rangeAt(3))
-            formattingBlock(attributedString, match.rangeAt(2))
-            attributedString.deleteCharacters(in: match.rangeAt(1))
+            attributedString.deleteCharacters(in: match.range(at: 3))
+            formattingBlock(attributedString, match.range(at: 2))
+            attributedString.deleteCharacters(in: match.range(at: 1))
         }
     }
     
@@ -321,7 +321,7 @@ open class LTMarkdownParser: TSBaseParser {
             let linkDataDetector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
             addParsingRuleWithRegularExpression(linkDataDetector) { [weak self] match, attributedString in
                 if let urlString = match.url?.absoluteString.removingPercentEncoding, let unescapedUrlString = self?.unescaped(string: urlString), let url = URL(string: unescapedUrlString) {
-                    attributedString.addAttribute(NSLinkAttributeName, value: url, range: match.range)
+                    attributedString.addAttribute(.link, value: url, range: match.range)
                 }
                 formattingBlock(attributedString, match.range)
             }
@@ -348,7 +348,7 @@ open class LTMarkdownParser: TSBaseParser {
     
     fileprivate class func stringWithHexaString(_ hexaString: String, atIndex index: Int) -> String {
         let range = hexaString.characters.index(hexaString.startIndex, offsetBy: index)..<hexaString.characters.index(hexaString.startIndex, offsetBy: index + 4)
-        let sub = hexaString.substring(with: range)
+        let sub = String(hexaString[range])
         
         let char = Character(UnicodeScalar(Int(strtoul(sub, nil, 16)))!)
         return "\(char)"
