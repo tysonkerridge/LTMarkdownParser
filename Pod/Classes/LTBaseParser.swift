@@ -19,7 +19,7 @@ open class TSBaseParser {
         
     }
     
-    open var defaultAttributes = [NSAttributedStringKey: Any]()
+    open var defaultAttributes = [NSAttributedString.Key: Any]()
     
     fileprivate var parsingPairs = [TSExpressionBlockPair]()
     
@@ -27,7 +27,7 @@ open class TSBaseParser {
         return attributedStringFromMarkdown(markdown, attributes: defaultAttributes)
     }
     
-    open func attributedStringFromMarkdown(_ markdown: String, attributes: [NSAttributedStringKey: Any]?) -> NSAttributedString? {
+    open func attributedStringFromMarkdown(_ markdown: String, attributes: [NSAttributedString.Key: Any]?) -> NSAttributedString? {
         return attributedStringFromAttributedMarkdownString(NSAttributedString(string: markdown, attributes: attributes))
     }
     

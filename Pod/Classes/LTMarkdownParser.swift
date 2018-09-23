@@ -46,21 +46,21 @@ open class LTMarkdownParser: TSBaseParser {
     public typealias LTMarkdownParserFormattingBlock = ((NSMutableAttributedString, NSRange) -> Void)
     public typealias LTMarkdownParserLevelFormattingBlock = ((NSMutableAttributedString, NSRange, Int) -> Void)
     
-    open var headerAttributes = [[NSAttributedStringKey: Any]]()
-    open var listAttributes = [[NSAttributedStringKey: Any]]()
-    open var numberedListAttributes = [[NSAttributedStringKey: Any]]()
-    open var quoteAttributes = [[NSAttributedStringKey: Any]]()
+    open var headerAttributes = [[NSAttributedString.Key: Any]]()
+    open var listAttributes = [[NSAttributedString.Key: Any]]()
+    open var numberedListAttributes = [[NSAttributedString.Key: Any]]()
+    open var quoteAttributes = [[NSAttributedString.Key: Any]]()
     
-    open var imageAttributes = [NSAttributedStringKey: Any]()
-    open var linkAttributes = [NSAttributedStringKey: Any]()
-    open var monospaceAttributes = [NSAttributedStringKey: Any]()
-    open var strongAttributes = [NSAttributedStringKey: Any]()
-    open var emphasisAttributes = [NSAttributedStringKey: Any]()
-    open var strongAndEmphasisAttributes = [NSAttributedStringKey: Any]()
+    open var imageAttributes = [NSAttributedString.Key: Any]()
+    open var linkAttributes = [NSAttributedString.Key: Any]()
+    open var monospaceAttributes = [NSAttributedString.Key: Any]()
+    open var strongAttributes = [NSAttributedString.Key: Any]()
+    open var emphasisAttributes = [NSAttributedString.Key: Any]()
+    open var strongAndEmphasisAttributes = [NSAttributedString.Key: Any]()
     
-    open static var standardParser = LTMarkdownParser()
+    public static var standardParser = LTMarkdownParser()
     
-    class func addAttributes(_ attributesArray: [[NSAttributedStringKey: Any]], atIndex level: Int, toString attributedString: NSMutableAttributedString, range: NSRange) {
+    class func addAttributes(_ attributesArray: [[NSAttributedString.Key: Any]], atIndex level: Int, toString attributedString: NSMutableAttributedString, range: NSRange) {
         guard !attributesArray.isEmpty else { return }
         
         guard let newAttributes = level < attributesArray.count && level >= 0 ? attributesArray[level] : attributesArray.last else { return }
@@ -83,7 +83,7 @@ open class LTMarkdownParser: TSBaseParser {
         
         linkAttributes = [
             .foregroundColor: UIColor.blue,
-            .underlineStyle: NSUnderlineStyle.styleSingle.rawValue as AnyObject
+            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject
         ]
         
         monospaceAttributes = [

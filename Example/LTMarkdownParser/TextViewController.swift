@@ -45,8 +45,8 @@ class TextViewController: RichTextViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidChangeFrame), name: NSNotification.Name.UIKeyboardDidChangeFrame, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidChangeFrame), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
         
         textView.delegate = self
         let fontSize: CGFloat = 12
@@ -126,18 +126,18 @@ class TextViewController: RichTextViewController {
     
     @objc func keyboardWillChangeFrame(_ notification: Notification) {
         // 'keyboardWillChangeFrame is to catch most of the situations of the keyboard, except if it's undocked, in which case we'll have to let keyboardDidChangeFrame correct the constraint
-        guard let keyboardFrameEnd = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+        guard let keyboardFrameEnd = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         
-        let animationDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? Double ?? 0.3
+        let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double ?? 0.3
         updateToolbarPositionForKeyboardFrame(keyboardFrameEnd, withAnimationDuration: animationDuration)
     }
     
     /// 'keyboardDidChangeFrame is to catch an undocked keyboard moving. That provides zero for the end frame on willChange, but provides a 0 for the begin frame here and the real value for the end frame
     /// This method can be deleted if you don't want to put the toolbar above the split keyboard
     @objc func keyboardDidChangeFrame(_ notification: Notification) {
-        guard let keyboardFrameBegin = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue, keyboardFrameBegin.height == 0, let keyboardFrameEnd = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+        guard let keyboardFrameBegin = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue, keyboardFrameBegin.height == 0, let keyboardFrameEnd = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         
-        let animationDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? Double ?? 0.3
+        let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double ?? 0.3
         updateToolbarPositionForKeyboardFrame(keyboardFrameEnd, withAnimationDuration: animationDuration)
     }
 
