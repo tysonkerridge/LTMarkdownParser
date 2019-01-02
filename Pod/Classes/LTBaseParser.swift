@@ -57,8 +57,15 @@ open class TSBaseParser {
         }
     }
     
-    open func addParsingRuleWithRegularExpression(_ regularExpression: NSRegularExpression, block: @escaping LTMarkdownParserMatchBlock) {
-        parsingPairs.append(TSExpressionBlockPair(regularExpression: regularExpression, block: block))
+    /// - Parameter insertAtFront: Whether its inserted at the beginning of the array of rules rather than appended to the end. Defaults to false (added to end).
+    /// - Note: `insertAtFront` useful for cases where one regular expression might conflict with another already there and it needs to be before the other (without adding logic to decide where it gets added compared to all the rest already there).
+    open func addParsingRuleWithRegularExpression(_ regularExpression: NSRegularExpression, insertAtFront: Bool = false, block: @escaping LTMarkdownParserMatchBlock) {
+        let pair = TSExpressionBlockPair(regularExpression: regularExpression, block: block)
+        if insertAtFront {
+            parsingPairs.insert(pair, at: 0)
+        } else {
+            parsingPairs.append(pair)
+        }
     }
     
 }

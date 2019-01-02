@@ -290,10 +290,11 @@ open class LTMarkdownParser: TSBaseParser {
         }
     }
     
-    fileprivate func addEnclosedParsingWithPattern(_ pattern: String, formattingBlock: @escaping LTMarkdownParserFormattingBlock) {
+    /// - Parameter insertAtFront: Whether its inserted at the beginning of the array of rules rather than appended to the end. Defaults to false (added to end).
+    fileprivate func addEnclosedParsingWithPattern(_ pattern: String, insertAtFront: Bool = false, formattingBlock: @escaping LTMarkdownParserFormattingBlock) {
         guard let regex = TSSwiftMarkdownRegex.regexForString(pattern) else { return }
         
-        addParsingRuleWithRegularExpression(regex) { match, attributedString in
+        addParsingRuleWithRegularExpression(regex, insertAtFront: insertAtFront) { match, attributedString in
             attributedString.deleteCharacters(in: match.range(at: 3))
             formattingBlock(attributedString, match.range(at: 2))
             attributedString.deleteCharacters(in: match.range(at: 1))
