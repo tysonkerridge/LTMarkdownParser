@@ -187,7 +187,7 @@ open class LTMarkdownParser: TSBaseParser {
     }
     
     open func addCodeEscapingParsing() {
-        guard let codingParsingRegex = TSSwiftMarkdownRegex.regexForString(TSSwiftMarkdownRegex.CodeEscaping) else { return }
+        guard let codingParsingRegex = TSSwiftMarkdownRegex.regexForString(TSSwiftMarkdownRegex.CodeEscaping, options: .dotMatchesLineSeparators) else { return }
         
         addParsingRuleWithRegularExpression(codingParsingRegex) { match, attributedString in
             let range = match.range(at: 2)
@@ -292,7 +292,7 @@ open class LTMarkdownParser: TSBaseParser {
     
     /// - Parameter insertAtFront: Whether its inserted at the beginning of the array of rules rather than appended to the end. Defaults to false (added to end).
     fileprivate func addEnclosedParsingWithPattern(_ pattern: String, insertAtFront: Bool = false, formattingBlock: @escaping LTMarkdownParserFormattingBlock) {
-        guard let regex = TSSwiftMarkdownRegex.regexForString(pattern) else { return }
+        guard let regex = TSSwiftMarkdownRegex.regexForString(pattern, options: .dotMatchesLineSeparators) else { return }
         
         addParsingRuleWithRegularExpression(regex, insertAtFront: insertAtFront) { match, attributedString in
             attributedString.deleteCharacters(in: match.range(at: 3))
