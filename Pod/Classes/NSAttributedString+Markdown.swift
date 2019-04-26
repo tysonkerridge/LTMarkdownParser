@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-public extension NSAttributedString {
+extension NSAttributedString {
     
     public func markdownString() -> String {
         let bulletCharacter = Character("\u{2022}")
